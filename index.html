@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulasi Interaktif GLBB</title>
+    <!-- Memuat Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Menggunakan font Inter */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Style tambahan untuk font di cdn.tailwindcss.com */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        
+        /* Style untuk canvas simulasi */
+        canvas {
+            background: #f4f4f5; /* bg-gray-100 */
+            border-radius: 8px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body class="bg-gray-200 text-gray-800">
+
+    <div class="container mx-auto max-w-4xl my-10 p-0 bg-white shadow-2xl rounded-lg overflow-hidden">
+        
+        <!-- Judul Header -->
+        <header class="bg-blue-600 text-white p-6">
+            <h1 class="text-3xl font-bold text-center">Simulasi Interaktif GLBB</h1>
+            <p class="text-center text-lg text-blue-100">Gerak Lurus Berubah Beraturan (untuk SMP Kelas 9)</p>
+        </header>
+
+        <main class="p-8 space-y-8">
+
+            <!-- 1. Bagian Penjelasan -->
+            <section>
+                <h2 class="text-2xl font-bold text-blue-600 mb-4">Apa itu GLBB?</h2>
+                <div class="space-y-4 text-base leading-relaxed">
+                    <p>
+                        <strong>Gerak Lurus Berubah Beraturan (GLBB)</strong> adalah gerak suatu benda pada lintasan lurus dengan <strong>percepatan tetap (konstan)</strong>. Artinya, kecepatan benda berubah secara teratur setiap detiknya, bisa semakin cepat atau semakin lambat.
+                    </p>
+                    <ul class="list-disc list-inside space-y-2">
+                        <li>
+                            <strong>GLBB Dipercepat:</strong> Terjadi jika percepatan ($$a$$) bernilai positif. Kecepatan benda bertambah. Contoh: Mobil yang di-gas,  buah apel jatuh dari pohon.
+                        </li>
+                        <li>
+                            <strong>GLBB Diperlambat:</strong> Terjadi jika percepatan ($$a$$) bernilai negatif. Kecepatan benda berkurang. Contoh: Mobil yang direm, bola dilempar ke atas.
+                        </li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- 2. Bagian Rumus Kunci -->
+            <section>
+                <h2 class="text-2xl font-bold text-blue-600 mb-4">Rumus Kunci GLBB</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <!-- Rumus 1 -->
+                    <div class="bg-gray-100 p-4 rounded-lg shadow">
+                        <p class="text-center text-lg font-mono">$$ v_t = v_0 + at $$</p>
+                    </div>
+                    <!-- Rumus 2 -->
+                    <div class="bg-gray-100 p-4 rounded-lg shadow">
+                        <p class="text-center text-lg font-mono">$$ s = v_0 t + \frac{1}{2} a t^2 $$</p>
+                    </div>
+                    <!-- Rumus 3 -->
+                    <div class="bg-gray-100 p-4 rounded-lg shadow">
+                        <p class="text-center text-lg font-mono">$$ v_t^2 = v_0^2 + 2as $$</p>
+                    </div>
+                </div>
+                <div class="mt-6 bg-blue-50 p-4 rounded-lg border border-blue-200">
+                    <h3 class="font-semibold text-blue-800 mb-2">Keterangan:</h3>
+                    <ul class="list-disc list-inside">
+                        <li>$$ v_t $$ = Kecepatan akhir (m/s)</li>
+                        <li>$$ v_0 $$ = Kecepatan awal (m/s)</li>
+                        <li>$$ a $$ = Percepatan (m/s²)</li>
+                        <li>$$ t $$ = Waktu (s)</li>
+                        <li>$$ s $$ = Jarak / Perpindahan (m)</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- 3. Bagian Simulasi Interaktif -->
+            <section>
+                <h2 class="text-2xl font-bold text-blue-600 mb-4">Simulasi Interaktif</h2>
+                
+                <!-- Panel Kontrol -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-gray-100 p-6 rounded-lg shadow-inner">
+                    <!-- Kontrol Kecepatan Awal -->
+                    <div>
+                        <label for="v0Slider" class="block font-medium">Kecepatan Awal ($$v_0$$): <span id="v0Value" class="font-bold text-blue-600">5</span> m/s</label>
+                        <input type="range" id="v0Slider" min="0" max="20" value="5" step="1" class="w-full mt-2">
+                    </div>
+                    <!-- Kontrol Percepatan -->
+                    <div>
+                        <label for="aSlider" class="block font-medium">Percepatan ($$a$$): <span id="aValue" class="font-bold text-blue-600">1</span> m/s²</label>
+                        <input type="range" id="aSlider" min="-5" max="5" value="1" step="0.5" class="w-full mt-2">
+                    </div>
+                </div>
+
+                <!-- Tombol Kontrol -->
+                <div class="flex justify-center gap-4 my-6">
+                    <button id="startBtn" class="px-6 py-2 bg-blue-500 text-white font-semibold rounded-lg shadow hover:bg-blue-600 transition duration-200">
+                        Mulai Simulasi
+                    </button>
+                    <button id="resetBtn" class="px-6 py-2 bg-gray-500 text-white font-semibold rounded-lg shadow hover:bg-gray-600 transition duration-200">
+                        Reset
+                    </button>
+                </div>
+
+                <!-- Tampilan Data Simulasi -->
+                <div class="grid grid-cols-3 gap-4 text-center mb-4">
+                    <div class="bg-blue-100 p-4 rounded-lg">
+                        <div class="text-sm text-blue-700">Waktu ($$t$$)</div>
+                        <div id="timeDisplay" class="text-2xl font-bold">0.00 s</div>
+                    </div>
+                    <div class="bg-green-100 p-4 rounded-lg">
+                        <div class="text-sm text-green-700">Jarak ($$s$$)</div>
+                        <div id="distDisplay" class="text-2xl font-bold">0.00 m</div>
+                    </div>
+                    <div class="bg-red-100 p-4 rounded-lg">
+                        <div class="text-sm text-red-700">Kecepatan ($$v_t$$)</div>
+                        <div id="velDisplay" class="text-2xl font-bold">0.00 m/s</div>
+                    </div>
+                </div>
+
+                <!-- Canvas untuk Simulasi -->
+                <div class="w-full bg-gray-100 rounded-lg overflow-hidden border-2 border-gray-300">
+                    <canvas id="simulationCanvas" height="100"></canvas>
+                </div>
+                <div id="simulationMessage" class="text-center text-red-600 font-bold mt-2 h-6"></div>
+
+            </section>
+
+            <!-- 4. Bagian Kalkulator -->
+            <section>
+                <h2 class="text-2xl font-bold text-blue-600 mb-4">Kalkulator GLBB</h2>
+                <div class="bg-gray-100 p-6 rounded-lg shadow-inner">
+                    <div class="mb-4">
+                        <label for="calcChoice" class="block font-medium mb-2">Apa yang ingin kamu hitung?</label>
+                        <select id="calcChoice" class="w-full p-2 border border-gray-300 rounded-lg">
+                            <option value="">-- Pilih Rumus --</option>
+                            <option value="vt">Kecepatan Akhir ($$v_t$$) dari ($$v_0, a, t$$)</option>
+                            <option value="s">Jarak ($$s$$) dari ($$v_0, a, t$$)</option>
+                            <option value="vts">Kecepatan Akhir ($$v_t$$) dari ($$v_0, a, s$$)</option>
+                        </select>
+                    </div>
+
+                    <!-- Input Dinamis untuk Kalkulator -->
+                    <div id="calcInputs" class="space-y-4">
+                        <!-- Grup Input 1: v0, a, t -->
+                        <div id="group-vat" class="hidden space-y-4">
+                            <div>
+                                <label for="calc-v0-1">Kecepatan Awal ($$v_0$$) (m/s):</label>
+                                <input type="number" id="calc-v0-1" class="w-full p-2 border border-gray-300 rounded-lg mt-1" placeholder="cth: 10">
+                            </div>
+                            <div>
+                                <label for="calc-a-1">Percepatan ($$a$$) (m/s²):</label>
+                                <input type="number" id="calc-a-1" class="w-full p-2 border border-gray-300 rounded-lg mt-1" placeholder="cth: 2">
+                            </div>
+                            <div>
+                                <label for="calc-t-1">Waktu ($$t$$) (s):</label>
+                                <input type="number" id="calc-t-1" class="w-full p-2 border border-gray-300 rounded-lg mt-1" placeholder="cth: 5">
+                            </div>
+                        </div>
+                        <!-- Grup Input 2: v0, a, s -->
+                        <div id="group-vas" class="hidden space-y-4">
+                            <div>
+                                <label for="calc-v0-2">Kecepatan Awal ($$v_0$$) (m/s):</label>
+                                <input type="number" id="calc-v0-2" class="w-full p-2 border border-gray-300 rounded-lg mt-1" placeholder="cth: 10">
+                            </div>
+                            <div>
+                                <label for="calc-a-2">Percepatan ($$a$$) (m/s²):</label>
+                                <input type="number" id="calc-a-2" class="w-full p-2 border border-gray-300 rounded-lg mt-1" placeholder="cth: 2">
+                            </div>
+                            <div>
+                                <label for="calc-s-2">Jarak ($$s$$) (m):</label>
+                                <input type="number" id="calc-s-2" class="w-full p-2 border border-gray-300 rounded-lg mt-1" placeholder="cth: 50">
+                            </div>
+                        </div>
+                    </div>
+
+                    <button id="calculateBtn" class="w-full mt-6 px-6 py-3 bg-green-500 text-white font-semibold rounded-lg shadow hover:bg-green-600 transition duration-200">
+                        Hitung
+                    </button>
+
+                    <div id="calcResult" class="mt-6 p-4 bg-white rounded-lg border border-gray-300 hidden">
+                        <h3 class="font-bold text-lg">Hasil:</h3>
+                        <p id="calcResultText" class="text-xl text-blue-600 font-bold"></p>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <footer class="bg-gray-800 text-gray-300 p-4 text-center text-sm">
+            Halaman Interaktif dibuat untuk tujuan edukasi.
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // --- Bagian Logika Simulasi ---
+
+            const canvas = document.getElementById('simulationCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            const v0Slider = document.getElementById('v0Slider');
+            const aSlider = document.getElementById('aSlider');
+            const v0Value = document.getElementById('v0Value');
+            const aValue = document.getElementById('aValue');
+
+            const startBtn = document.getElementById('startBtn');
+            const resetBtn = document.getElementById('resetBtn');
+
+            const timeDisplay = document.getElementById('timeDisplay');
+            const distDisplay = document.getElementById('distDisplay');
+            const velDisplay = document.getElementById('velDisplay');
+            const simMessage = document.getElementById('simulationMessage');
+
+            let isRunning = false;
+            let startTime = 0;
+            let animationFrameId = null;
+            let v0 = parseFloat(v0Slider.value);
+            let a = parseFloat(aSlider.value);
+            let time = 0;
+            let distance = 0;
+            let velocity = v0;
+            let ballRadius = 15;
+            let startPixelPos = 30; // Posisi awal bola di canvas
+            let pixelScale = 10; // 1 meter = 10 pixels
+
+            // Fungsi untuk menyesuaikan ukuran canvas & menggambar ulang
+            function resizeCanvas() {
+                canvas.width = canvas.clientWidth;
+                canvas.height = 100;
+                draw(distance * pixelScale + startPixelPos);
+            }
+
+            // Fungsi untuk menggambar bola dan lintasan
+            function draw(position) {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // Gambar lintasan
+                ctx.beginPath();
+                ctx.moveTo(startPixelPos, canvas.height / 2);
+                ctx.lineTo(canvas.width - startPixelPos, canvas.height / 2);
+                ctx.strokeStyle = '#9ca3af'; // bg-gray-400
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                // Gambar bola
+                ctx.beginPath();
+                ctx.arc(position, canvas.height / 2, ballRadius, 0, Math.PI * 2);
+                ctx.fillStyle = '#ef4444'; // bg-red-500
+                ctx.fill();
+                ctx.closePath();
+            }
+
+            // Fungsi update simulasi (loop animasi)
+            function updateSimulation(timestamp) {
+                if (!isRunning) return;
+
+                if (startTime === 0) {
+                    startTime = timestamp;
+                }
+
+                time = (timestamp - startTime) / 1000; // dalam detik
+                
+                // Hitung berdasarkan rumus GLBB
+                distance = v0 * time + 0.5 * a * time * time;
+                velocity = v0 + a * time;
+
+                // Update tampilan data
+                timeDisplay.textContent = time.toFixed(2) + ' s';
+                distDisplay.textContent = distance.toFixed(2) + ' m';
+                velDisplay.textContent = velocity.toFixed(2) + ' m/s';
+
+                let pixelPosition = distance * pixelScale + startPixelPos;
+                draw(pixelPosition);
+
+                // Cek kondisi berhenti
+                let stop = false;
+                simMessage.textContent = '';
+                
+                if (velocity < 0 && distance <= 0 && a < 0) { // Bergerak mundur dan kembali ke start
+                    stop = true;
+                    simMessage.textContent = 'Benda berhenti dan berbalik arah ke posisi awal.';
+                    distance = 0;
+                    velocity = v0 + a * time; // Kecepatan saat kembali
+                } else if (pixelPosition > canvas.width - ballRadius) { // Sampai ujung kanan
+                    stop = true;
+                    simMessage.textContent = 'Benda mencapai ujung lintasan.';
+                } else if (pixelPosition < ballRadius) { // Sampai ujung kiri (jika v0 negatif)
+                    stop = true;
+                    simMessage.textContent = 'Benda mencapai ujung lintasan.';
+                }
+
+                if (stop) {
+                    resetSimulation(); // Otomatis reset jika berhenti
+                    // Tampilkan nilai akhir
+                    timeDisplay.textContent = time.toFixed(2) + ' s';
+                    distDisplay.textContent = distance.toFixed(2) + ' m';
+                    velDisplay.textContent = velocity.toFixed(2) + ' m/s';
+                } else {
+                    animationFrameId = requestAnimationFrame(updateSimulation);
+                }
+            }
+
+            // Fungsi untuk memulai simulasi
+            function startSimulation() {
+                if (isRunning) return;
+                isRunning = true;
+                
+                v0 = parseFloat(v0Slider.value);
+                a = parseFloat(aSlider.value);
+                startTime = 0; // Akan di-set di frame pertama
+                
+                velDisplay.textContent = v0.toFixed(2) + ' m/s';
+                
+                // Nonaktifkan tombol
+                startBtn.disabled = true;
+                v0Slider.disabled = true;
+                aSlider.disabled = true;
+                startBtn.classList.add('opacity-50', 'cursor-not-allowed');
+
+                animationFrameId = requestAnimationFrame(updateSimulation);
+            }
+
+            // Fungsi untuk mereset simulasi
+            function resetSimulation() {
+                isRunning = false;
+                cancelAnimationFrame(animationFrameId);
+                
+                time = 0;
+                distance = 0;
+                v0 = parseFloat(v0Slider.value);
+                a = parseFloat(aSlider.value);
+                velocity = v0;
+
+                timeDisplay.textContent = '0.00 s';
+                distDisplay.textContent = '0.00 m';
+                velDisplay.textContent = v0.toFixed(2) + ' m/s';
+                
+                draw(startPixelPos); // Gambar bola di posisi awal
+
+                // Aktifkan tombol kembali
+                startBtn.disabled = false;
+                v0Slider.disabled = false;
+                aSlider.disabled = false;
+                startBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            }
+
+            // Event Listeners untuk Slider
+            v0Slider.addEventListener('input', (e) => {
+                v0Value.textContent = e.target.value;
+                if (!isRunning) {
+                    v0 = parseFloat(e.target.value);
+                    velDisplay.textContent = v0.toFixed(2) + ' m/s';
+                }
+            });
+
+            aSlider.addEventListener('input', (e) => {
+                aValue.textContent = e.target.value;
+                 if (!isRunning) {
+                    a = parseFloat(e.target.value);
+                }
+            });
+
+            // Event Listeners untuk Tombol
+            startBtn.addEventListener('click', startSimulation);
+            resetBtn.addEventListener('click', () => {
+                resetSimulation();
+                simMessage.textContent = ''; // Hapus pesan saat reset manual
+            });
+            
+            // Event listener untuk resize window
+            window.addEventListener('resize', resizeCanvas);
+            
+            // Inisialisasi awal
+            resizeCanvas(); // Panggil sekali saat load
+            resetSimulation(); // Set nilai awal
+
+
+            // --- Bagian Logika Kalkulator ---
+
+            const calcChoice = document.getElementById('calcChoice');
+            const calculateBtn = document.getElementById('calculateBtn');
+            const calcResult = document.getElementById('calcResult');
+            const calcResultText = document.getElementById('calcResultText');
+            
+            const groupVat = document.getElementById('group-vat');
+            const groupVas = document.getElementById('group-vas');
+            
+            const inputs = {
+                v0_1: document.getElementById('calc-v0-1'),
+                a_1: document.getElementById('calc-a-1'),
+                t_1: document.getElementById('calc-t-1'),
+                v0_2: document.getElementById('calc-v0-2'),
+                a_2: document.getElementById('calc-a-2'),
+                s_2: document.getElementById('calc-s-2')
+            };
+
+            // Tampilkan/sembunyikan input berdasarkan pilihan
+            calcChoice.addEventListener('change', () => {
+                const choice = calcChoice.value;
+                
+                // Sembunyikan semua grup
+                groupVat.classList.add('hidden');
+                groupVas.classList.add('hidden');
+                calcResult.classList.add('hidden');
+
+                if (choice === 'vt' || choice === 's') {
+                    groupVat.classList.remove('hidden');
+                } else if (choice === 'vts') {
+                    groupVas.classList.remove('hidden');
+                }
+            });
+
+            // Logika perhitungan
+            calculateBtn.addEventListener('click', () => {
+                const choice = calcChoice.value;
+                let resultText = '';
+
+                try {
+                    if (choice === 'vt') {
+                        const v0 = parseFloat(inputs.v0_1.value);
+                        const a = parseFloat(inputs.a_1.value);
+                        const t = parseFloat(inputs.t_1.value);
+                        if (isNaN(v0) || isNaN(a) || isNaN(t)) throw new Error('Input tidak valid');
+                        const vt = v0 + a * t;
+                        resultText = `$$ v_t = ${v0} + (${a} \\times ${t}) = ${vt.toFixed(2)} $$ m/s`;
+                    
+                    } else if (choice === 's') {
+                        const v0 = parseFloat(inputs.v0_1.value);
+                        const a = parseFloat(inputs.a_1.value);
+                        const t = parseFloat(inputs.t_1.value);
+                        if (isNaN(v0) || isNaN(a) || isNaN(t)) throw new Error('Input tidak valid');
+                        const s = (v0 * t) + (0.5 * a * t * t);
+                        resultText = `$$ s = (${v0} \\times ${t}) + \\frac{1}{2} (${a} \\times ${t}^2) = ${s.toFixed(2)} $$ m`;
+
+                    } else if (choice === 'vts') {
+                        const v0 = parseFloat(inputs.v0_2.value);
+                        const a = parseFloat(inputs.a_2.value);
+                        const s = parseFloat(inputs.s_2.value);
+                        if (isNaN(v0) || isNaN(a) || isNaN(s)) throw new Error('Input tidak valid');
+                        
+                        const v_squared = (v0 * v0) + (2 * a * s);
+                        if (v_squared < 0) {
+                            resultText = 'Hasil tidak valid (akar negatif). Periksa input Anda (mungkin benda tidak pernah mencapai jarak tsb).';
+                        } else {
+                            const vt = Math.sqrt(v_squared);
+                            resultText = `$$ v_t = \\sqrt{${v0}^2 + 2(${a})(${s})} = ${vt.toFixed(2)} $$ m/s`;
+                        }
+                    
+                    } else {
+                        resultText = 'Silakan pilih rumus terlebih dahulu.';
+                    }
+
+                } catch (error) {
+                    resultText = 'Error: Pastikan semua kolom diisi dengan angka yang benar.';
+                }
+
+                calcResultText.textContent = resultText;
+                calcResult.classList.remove('hidden');
+                
+                // Memicu MathJax untuk me-render rumus LaTeX (jika ada)
+                if (window.MathJax) {
+                    MathJax.typesetPromise([calcResultText]);
+                }
+            });
+
+        });
+    </script>
+    
+    <!-- Memuat MathJax untuk render rumus matematika (LaTeX) -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+</body>
+</html>
